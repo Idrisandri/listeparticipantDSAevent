@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Algo Tournament — Liste des Participants</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Mitr:wght@275;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --red:      #c0392b;
+      --red-dim:  rgba(192,57,43,0.09);
+      --dark:     #111111;
+      --mid:      #444444;
+      --muted:    #999999;
+      --bg:       #F7F7F7;
+      --card:     #ffffff;
+      --border:   #e4e4e4;
+      --shadow:   0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Mitr', sans-serif;
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: relative;
+      text-align: center;
+      padding: 44px 20px 32px;
+      overflow: hidden;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 600px 260px at 50% -10%, rgba(192,57,43,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── LOGOS ── */
+    .logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin: 0 auto 20px;
+      flex-wrap: wrap;
+    }
+    .dsa-logo-header {
+      width: 80px;
+      display: block;
+    }
+    .dsa-logo-header img { width: 100%; display: block; }
+
+    .logo-divider {
+      width: 1px;
+      height: 46px;
+      background: var(--border);
+    }
+    .algo-mada-logo {
+      width: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── TITLE ── */
+    .header-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: clamp(20px, 5vw, 40px);
+      letter-spacing: 3px;
+      color: var(--dark);
+    }
+    .header-title span { color: var(--red); }
+
+    .partenaire-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 10px 0 6px;
+      flex-wrap: wrap;
+    }
+    .partenaire-row .line {
+      width: 50px; height: 1px;
+      background: var(--border);
+    }
+    .partenaire-row span {
+      font-family: 'Mitr', sans-serif;
+      font-size: clamp(10px, 2vw, 13px);
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+    }
+    .header-sub {
+      font-family: 'Mitr', sans-serif;
+      font-weight: 275;
+      font-size: clamp(12px, 2vw, 14px);
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+
+    /* ── STATS ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 28px 16px 0;
+      flex-wrap: wrap;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .stat {
+      text-align: center;
+      flex: 1;
+      min-width: 80px;
+      padding: 0 12px;
+      position: relative;
+    }
+    .stat + .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 4px;
+      height: 34px;
+      width: 1px;
+      background: var(--border);
+    }
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: clamp(9px, 1.5vw, 11px);
+      font-weight: 275;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 28px 16px 24px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(9px, 1.5vw, 10px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 8px 18px;
+      border-radius: 3px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      text-transform: uppercase;
+    }
+    .tab.active, .tab:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 14px;
+      padding: 0 20px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Mobile : 1 colonne */
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+        padding: 0 14px 48px;
+        gap: 12px;
+      }
+      .logos-row { gap: 16px; }
+      .logo-divider { height: 36px; }
+      .dsa-logo-header { width: 64px; }
+      .algo-mada-logo { width: 72px; }
+      .header { padding: 32px 14px 24px; }
+      .stats-bar { padding: 20px 10px 0; }
+      .stat { min-width: 66px; padding: 0 8px; }
+      .filter-tabs { padding: 20px 14px 18px; gap: 6px; }
+      .tab { padding: 7px 14px; }
+    }
+
+    /* Tablette : 2 colonnes */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 16px 52px;
+      }
+    }
+
+    /* ── TEAM CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .card:hover {
+      border-color: rgba(192,57,43,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-num {
+      position: absolute;
+      top: 14px; right: 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.10);
+      letter-spacing: 1px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .team-icon {
+      width: 38px; height: 38px;
+      border-radius: 6px;
+      background: var(--red-dim);
+      border: 1px solid rgba(192,57,43,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .team-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(11px, 2vw, 13px);
+      font-weight: 700;
+      color: var(--dark);
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    .badge {
+      display: inline-block;
+      font-family: 'Mitr', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+    .badge-school {
+      background: rgba(41,128,185,0.10);
+      border: 1px solid rgba(41,128,185,0.30);
+      color: #2980b9;
+    }
+    .badge-classic {
+      background: var(--red-dim);
+      border: 1px solid rgba(192,57,43,0.30);
+      color: var(--red);
+    }
+    .members-label {
+      font-family: 'Mitr', sans-serif;
+      font-size: 10px;
+      font-weight: 275;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .member-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .member-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: clamp(11px, 1.8vw, 12.5px);
+      font-weight: 400;
+      color: var(--mid);
+      line-height: 1.35;
+    }
+    .member-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+      margin-top: 5px;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 20px 16px;
+      font-family: 'Mitr', sans-serif;
+      font-size: clamp(11px, 1.8vw, 12px);
+      font-weight: 275;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logos-row">
+      <div class="dsa-logo-header">
+        <img src="DSA.png" alt="DSA" onerror="this.style.display='none'">
+      </div>
+      <div class="logo-divider"></div>
+      <div class="algo-mada-logo">
+       <img src="algo-mada.svg" alt="Algo Mada" style="width:100%; display:block;">
+      </div>
+    </div>
+
+    <div class="header-title">Algo <span>Tournament</span></div>
+    <div class="partenaire-row">
+      <div class="line"></div>
+      <span>Liste des participants</span>
+      <div class="line"></div>
+    </div>
+    <div class="header-sub">Le 08 Mai · INSI Ambanidia</div>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num" id="stat-teams">—</div>
+        <div class="stat-label">Équipes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-members">—</div>
+        <div class="stat-label">Participants</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-school">—</div>
+        <div class="stat-label">#School</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-classic">—</div>
+        <div class="stat-label">#Classic</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="filter-tabs">
+    <button class="tab active" onclick="filterTeams('all', this)">Tous</button>
+    <button class="tab" onclick="filterTeams('school', this)">#School</button>
+    <button class="tab" onclick="filterTeams('classic', this)">#Classic</button>
+  </div>
+
+  <!-- TEAM GRID -->
+  <div class="grid" id="grid"></div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Algo Tournament · DSA × Algo Mada · INSI Ambanidia · 08 Mai 2025
+  </div>
+
+<script>
+const teams = [
+  { name:"TanaCode", level:"#School", members:["Rasoloson Tiah Oz Ritsokaliana","Raharimanana Tantely Nirina Judickaël","Ramaniraka Fitiantsoa Mendrika","Raharimalala Fitia Sonya","Rabemalanto Irian'Ny Avo Aina Caëlle"] },
+  { name:"High five.0", level:"#School", members:["Manoa Elie","RALIJAONA Andriniaina Fehizoro","RAKOTONDRAMANANA Nantenaina Mickaël","Razafindrandretsa Anjanirina Miranda","Azirison Henintso Franck Jordi"] },
+  { name:"CODEX", level:"#Classic", members:["ANDRIAMIHAJAMANANANA Anjara","NY Aina Tendrisoa Andrianina","RANARISON ANDRIANJAFY Fiderana Yves Denis"] },
+  { name:"Tri T", level:"#Classic", members:["RAKOTONINDRINA Kooloina Faonemzantsoa","RANTY Mitantsoa","NIRINA Jaonarisoa"] },
+  { name:"ALGO CODE", level:"#School", members:["FIAROVANA Mamizou Ardah","VOLOLONARINDRA Maholinarivo","NDAHIMANANJARA Francky","RAFALIARISON Vonokandresy Yvon","RAKOTOARIVELO Maminiaina Faniriana"] },
+  { name:"Azura", level:"#School", members:["ANDRIATIANA Mihajasoa Mario","RAMAMONJISOA Tefisoa Mirary","ANDRIANARIVO NY Miraniaina Karinah","RASOAMIZANA Volarimanana Lalaina Faneva","RANDRIAMIALY-JOHNNE Koloina Jacquie"] },
+  { name:"HATACKON", level:"#School", members:["ANDRIANALY Fahasoavana Mitia","RAMPANJATO Fifaliana Nantenaina Juvenal","ANDRIANARISO N Mandresy Ifaliana","RAZAFIMANDIMBY MIRADO Harintsialonina","RAKOTONIRINA Rajoniaina Safidy"] },
+  { name:"Cat_Remote", level:"#School", members:["RALAIANJARIVO Tokiniaina Clément","RAKOTOARIJAONA Nomenjanahary Hasiniaina","RAKOTOMAVO Iraina Andy","RAZANAMAHERY Hasiniaina Laurie Carmelah","Rakotoseheno Toavina NY Aina Sarobidy"] },
+  { name:"Des Buggeurs", level:"#Classic", members:["Velonjanahary Maherilaza Giovanni Jonah","Rakotoarimanana Misandratra Harena"] },
+  { name:"Alpha coders", level:"#School", members:["RADERT Sandratana Holy Maëlle Francesca","RAMAROMANANA Njaratiana Tiavina Liantsoa","RAMILISON Herifidy Nafenosoa Shanty","RAKOTONDRAMANANA Andomanankasina Fanevanjanahary","RAMALALAHASITERA Muckaya Florida"] },
+  { name:"NôfAlgo", level:"#School", members:["RAMANGA-LAHY Andy Wilson","ANDRIATSIORY Tahina Josaphat","ANDRIARIMANANA Tojonirina Finoana Kevin","RAKOTOSON Tojonirina Anthony","RAHARIJAONA Finaritra Fiderana"] },
+  { name:"all-Go", level:"#School", members:["RANAIVO ARIMANANA Miaro Aïka","RAZAFINDRAIBE Mika Mamoa Fitahina","ANJARASOA Lauriana Diguesca","RAZAFINTSALAMA Zo Ny Arilala Hery","ANDRIAMANGAHARIVO Fitiavana Mickaël"] },
+  { name:"ℬ𝒾𝓃𝒶𝓇𝓎 𝒟𝒾𝓋𝒶𝓈", level:"#School", members:["HAJATIANA Eliza","Zava Anahy Audrey Francinah","ANDRIANALISO A Fitahiana Iavitiana Tanya","HIOTISOA Andriarofenitra Amboaramamiratra"] },
+  { name:"Code Crew", level:"#School", members:["RASOLONJATOVOMARK Nathan","RABENATOA NDRO Tahiry Mendrika","RANDRIANANTENAINA Honoré"] },
+  { name:"Triple Loop", level:"#School", members:["RANDRIAMAKONJY Fitahiana Soanjanahary","HARIMINO Faly Henintsoa","Isha Andriamirado"] }
+];
+
+function getInitials(name) {
+  return name.replace(/[^\w\s]/g,'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+}
+
+function renderGrid(filter='all') {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const filtered = filter==='all' ? teams : teams.filter(t=>t.level.toLowerCase().includes(filter));
+  filtered.forEach((team,i) => {
+    const isSchool = team.level==='#School';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-num">#${String(i+1).padStart(2,'0')}</div>
+      <div class="card-header">
+        <div class="team-icon">${getInitials(team.name)}</div>
+        <div>
+          <div class="team-name">${team.name}</div>
+          <span class="badge ${isSchool?'badge-school':'badge-classic'}">${team.level}</span>
+        </div>
+      </div>
+      <div class="members-label">Membres · ${team.members.length}</div>
+      <ul class="member-list">
+        ${team.members.map(m=>`<li class="member-item"><div class="member-dot"></div><span>${m}</span></li>`).join('')}
+      </ul>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('stat-teams').textContent = filtered.length;
+  document.getElementById('stat-members').textContent = filtered.reduce((s,t)=>s+t.members.length,0);
+  document.getElementById('stat-school').textContent = filtered.filter(t=>t.level==='#School').length;
+  document.getElementById('stat-classic').textContent = filtered.filter(t=>t.level==='#Classic').length;
+}
+
+function filterTeams(type, btn) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid(type);
+}
+
+renderGrid('all');
+</script>
+</body>
+</html>
